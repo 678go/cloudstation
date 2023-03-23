@@ -1,9 +1,9 @@
 package cloud
 
 import (
-	"cloudstation/store"
 	"context"
 	"github.com/tencentyun/cos-go-sdk-v5"
+	"github.com/ylinyang/cloudstation/store"
 	"log"
 	"net/http"
 	"net/url"
