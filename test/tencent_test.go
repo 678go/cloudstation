@@ -1,10 +1,10 @@
 package test
 
 import (
-	"cloudstation/cloud"
-	"cloudstation/store"
 	"context"
 	"github.com/tencentyun/cos-go-sdk-v5"
+	"github.com/ylinyang/cloudstation/cloud"
+	"github.com/ylinyang/cloudstation/store"
 	"log"
 	"net/http"
 	"net/url"
@@ -17,7 +17,7 @@ import (
 var c store.UpLoader
 
 func TestTUpLoad(t *testing.T) {
-	if err := c.UpLoad("", "/test/d.txt", SecretId, SecretKey); err != nil {
+	if err := c.UpLoad("", "/test/aaa.txt", SecretId, SecretKey); err != nil {
 		log.Println(err)
 	}
 }

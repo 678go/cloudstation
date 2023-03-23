@@ -2,6 +2,8 @@ package cloud
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/tencentyun/cos-go-sdk-v5"
 	"github.com/ylinyang/cloudstation/store"
 	"log"
@@ -35,23 +37,33 @@ func NewTenCent(bucketUrl string, secretId string, secretKey string) *TenCent {
 }
 
 func (t *TenCent) UpLoad(filePath string, filename string, id string, key string) error {
-
+	if filename == "" && filePath == "" {
+		return errors.New("filename或者filepath为空")
+	}
 	// 获取预签名 URL
-	preUrl, err := t.client.Object.GetPresignedURL(context.Background(), http.MethodPut, filePath+filename, id, key, 10*time.Minute, nil)
+	preUrl, err := t.client.Object.GetPresignedURL(context.Background(), http.MethodPut, filePath+filename, id, key, 10*time.Second, nil)
 	if err != nil {
 		log.Panic("获取与预签名失败", err)
 	}
 
-	data := "test upload with preUrl"
-	f := strings.NewReader(data)
-	_, err = http.NewRequest(http.MethodPut, preUrl.String(), f)
+	// 单个文件
+	content, err := os.ReadFile("./" + filename)
+	if err != nil {
+		log.Panicf("读取%s文件失败", filename)
+	}
+	// 文件夹 todo
+	// 多个上传 todo
+	f := strings.NewReader(string(content))
+	req, err := http.NewRequest(http.MethodPut, preUrl.String(), f)
 	if err != nil {
 		panic(err)
 	}
-	//req.Header.Set("Content-Type", "text/html")
-	//_, err = http.DefaultClient.Do(req)
-	//if err != nil {
-	//	panic(err)
-	//}
+
+	req.Header.Set("Content-Type", "text/html")
+	_, err = http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("上传盘：上传成功")
 	return nil
 }
